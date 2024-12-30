@@ -2,47 +2,38 @@ from sqlalchemy.orm import Session
 from models.models import Pokemon, Abilities, Stats, Types
 
 class PokemonRepository:
-    @staticmethod
-    def get_all_pokemon(db: Session, offset: int, limit: int):
-        return db.query(Pokemon).offset(offset).limit(limit).all()
+    def __init__(self, session: Session):
+        self.session = session
 
-    @staticmethod
-    def get_pokemon_by_id(db: Session, pokemon_id: int):
-        return db.query(Pokemon).filter(Pokemon.pokemon_id == pokemon_id).first()
+    def get_all_pokemon(self, offset: int, limit: int):
+        return self.session.query(Pokemon).offset(offset).limit(limit).all()
 
-    @staticmethod
-    def get_pokemon_by_name(db: Session, name: str):
-        return db.query(Pokemon).filter(Pokemon.name == name).first()
+    def get_pokemon_by_id(self, pokemon_id: int):
+        return self.session.query(Pokemon).filter(Pokemon.pokemon_id == pokemon_id).first()
 
-    @staticmethod
-    def create_pokemon(db: Session, pokemon_data: Pokemon):
-        db.add(pokemon_data)
-        db.commit()
-        db.refresh(pokemon_data)
+    def get_pokemon_by_name(self, name: str):
+        return self.session.query(Pokemon).filter(Pokemon.name == name).first()
+
+    def create_pokemon(self, pokemon_data: Pokemon):
+        self.session.add(pokemon_data)
+        self.session.flush()  # Ensures `pokemon_id` is generated before related data is added
         return pokemon_data
 
-    @staticmethod
-    def delete_pokemon(db: Session, pokemon_id: int):
-        pokemon = db.query(Pokemon).filter(Pokemon.pokemon_id == pokemon_id).first()
+    def delete_pokemon(self, pokemon_id: int):
+        pokemon = self.session.query(Pokemon).filter(Pokemon.pokemon_id == pokemon_id).first()
         if pokemon:
-            db.delete(pokemon)
-            db.commit()
+            self.session.delete(pokemon)
         return pokemon
 
-    @staticmethod
-    def update_pokemon(db: Session, pokemon: Pokemon):
-        db.add(pokemon)
-        db.commit()
-        db.refresh(pokemon)
+    def update_pokemon(self, pokemon: Pokemon):
+        self.session.add(pokemon)
+        self.session.flush()
         return pokemon
 
-    @staticmethod
-    def delete_related_data(db: Session, pokemon_id: int):
-        db.query(Abilities).filter(Abilities.pokemon_id == pokemon_id).delete()
-        db.query(Stats).filter(Stats.pokemon_id == pokemon_id).delete()
-        db.query(Types).filter(Types.pokemon_id == pokemon_id).delete()
+    def delete_related_data(self, pokemon_id: int):
+        self.session.query(Abilities).filter(Abilities.pokemon_id == pokemon_id).delete()
+        self.session.query(Stats).filter(Stats.pokemon_id == pokemon_id).delete()
+        self.session.query(Types).filter(Types.pokemon_id == pokemon_id).delete()
 
-    @staticmethod
-    def add_related_data(db: Session, abilities, stats, types):
-        db.add_all(abilities + stats + types)
-        db.commit()
+    def add_related_data(self, abilities, stats, types):
+        self.session.add_all(abilities + stats + types)
