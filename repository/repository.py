@@ -5,10 +5,10 @@ class PokemonRepository:
     def __init__(self, session: Session):
         self.session = session
 
-    def get_all_pokemon(self, offset: int, limit: int):
+    def get_all_pokemon(self, offset: int=1, limit: int=25):
         return self.session.query(Pokemon).offset(offset).limit(limit).all()
 
-    def get_pokemon_by_id(self, pokemon_id: int):
+    def get_pokemon_by_id(self, pokemon_id: int=1):
         return self.session.query(Pokemon).filter(Pokemon.pokemon_id == pokemon_id).first()
 
     def get_pokemon_by_name(self, name: str):

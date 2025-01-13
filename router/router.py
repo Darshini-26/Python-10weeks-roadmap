@@ -1,20 +1,20 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 from typing import List
 from sqlalchemy.orm import session
 from schemas.schemas import PokemonResponse, PokemonOutput
 from service.service import PokemonService
-from config.database import get_db
+from config.database import get_db,SessionLocal
 from service.unit_of_work import UnitOfWork
 
 router = APIRouter(prefix="/pokemon", tags=["Pokemon"])
 
 # Dependency to provide a Unit of Work
-def get_uow(db: session = Depends(get_db)):
-    return UnitOfWork(db)
+def get_uow():
+    return UnitOfWork(SessionLocal)
 
 # Fetch all Pokémon
 @router.get("/", response_model=List[PokemonOutput])
-def get_all_pokemon(page: int = 1, page_size: int = 25, uow: UnitOfWork = Depends(get_uow)):
+def get_all_pokemon(page:int= Query(1,description="page" ), page_size: int= Query(25,description="page size"), uow: UnitOfWork = Depends(get_uow)):
     return PokemonService.get_all_pokemon(page, page_size, uow)
 
 # Fetch Pokémon by ID

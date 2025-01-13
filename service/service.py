@@ -11,12 +11,15 @@ class PokemonService:
     def get_all_pokemon(page: int, page_size: int, uow: UnitOfWork) -> List[Pokemon]:
         offset = (page - 1) * page_size
         with uow:
-            return PokemonRepository(uow.session).get_all_pokemon(offset, page_size)
+            pokemon_repo=uow.pokemons
+            pokemons=pokemon_repo.get_all_pokemon(offset, page_size)
+            return pokemons
 
     @staticmethod
     def get_pokemon_by_id(pokemon_id: int, uow: UnitOfWork) -> Pokemon:
         with uow:
-            pokemon = PokemonRepository(uow.session).get_pokemon_by_id(pokemon_id)
+            pokemon_repo= uow.pokemons
+            pokemon = pokemon_repo.get_pokemon_by_id(pokemon_id)
             if not pokemon:
                 raise HTTPException(status_code=404, detail="Pokemon not found")
             return pokemon
@@ -24,7 +27,8 @@ class PokemonService:
     @staticmethod
     def get_pokemon_by_name(name: str, uow: UnitOfWork) -> Pokemon:
         with uow:
-            pokemon = PokemonRepository(uow.session).get_pokemon_by_name(name)
+            pokemon_repo= uow.pokemons
+            pokemon = pokemon_repo.get_pokemon_by_name(name)
             if not pokemon:
                 raise HTTPException(status_code=404, detail="Pokemon not found")
             return pokemon
@@ -32,6 +36,7 @@ class PokemonService:
     @staticmethod
     def create_pokemon(pokemon_data: PokemonResponse, uow: UnitOfWork) -> Pokemon:
         with uow:
+            pokemon_repo= uow.pokemons
             pokemon = Pokemon(
                 name=pokemon_data.name,
                 height=pokemon_data.height,
@@ -40,21 +45,23 @@ class PokemonService:
                 image_url=pokemon_data.image_url,
                 pokemon_url=pokemon_data.pokemon_url,
             )
-            PokemonRepository(uow.session).create_pokemon(pokemon)
-
+            pokemon_repo.create_pokemon(pokemon)
+            
+        
             # Add related data (abilities, stats, types)
             abilities = [Abilities(pokemon_id=pokemon.pokemon_id, **a.dict()) for a in pokemon_data.abilities]
             stats = [Stats(pokemon_id=pokemon.pokemon_id, **s.dict()) for s in pokemon_data.stats]
             types = [Types(pokemon_id=pokemon.pokemon_id, **t.dict()) for t in pokemon_data.types]
-            PokemonRepository(uow.session).add_related_data(abilities, stats, types)
+            created_pokemon=pokemon_repo.add_related_data(abilities, stats, types)
 
             uow.commit()
-            return pokemon
+            return created_pokemon
 
     @staticmethod
     def update_pokemon(pokemon_id: int, updated_data: PokemonResponse, uow: UnitOfWork) -> Pokemon:
         with uow:
-            pokemon = PokemonRepository(uow.session).get_pokemon_by_id(pokemon_id)
+            pokemon_repo=uow.pokemons
+            pokemon = pokemon_repo.get_pokemon_by_id(pokemon_id)
             if not pokemon:
                 raise HTTPException(status_code=404, detail="Pokemon not found")
 
@@ -65,20 +72,21 @@ class PokemonService:
             pokemon.image_url = updated_data.image_url
             pokemon.pokemon_url = updated_data.pokemon_url
 
-            PokemonRepository(uow.session).delete_related_data(pokemon_id)
+            pokemon_repo.delete_related_data(pokemon_id)
             abilities = [Abilities(pokemon_id=pokemon_id, **a.dict()) for a in updated_data.abilities]
             stats = [Stats(pokemon_id=pokemon_id, **s.dict()) for s in updated_data.stats]
             types = [Types(pokemon_id=pokemon_id, **t.dict()) for t in updated_data.types]
-            PokemonRepository(uow.session).add_related_data(abilities, stats, types)
+            pokemon_repo.add_related_data(abilities, stats, types)
 
-            updated_pokemon = PokemonRepository(uow.session).update_pokemon(pokemon)
+            updated_pokemon = pokemon_repo.update_pokemon(pokemon)
             uow.commit()
             return updated_pokemon
 
     @staticmethod
     def delete_pokemon(pokemon_id: int, uow: UnitOfWork) -> dict:
         with uow:
-            pokemon = PokemonRepository(uow.session).delete_pokemon(pokemon_id)
+            pokemon_repo=uow.pokemons
+            pokemon = pokemon_repo.delete_pokemon(pokemon_id)
             if not pokemon:
                 raise HTTPException(status_code=404, detail="Pokemon not found")
             uow.commit()
