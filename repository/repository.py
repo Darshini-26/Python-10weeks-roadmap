@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session
 from models.models import Pokemon, Abilities, Stats, Types
+from sqlalchemy.orm import joinedload
 
 class PokemonRepository:
     def __init__(self, session: Session):
@@ -37,3 +38,15 @@ class PokemonRepository:
 
     def add_related_data(self, abilities, stats, types):
         self.session.add_all(abilities + stats + types)
+
+    def get_pokemon_by_name_with_relations(self, name: str):
+        return (
+            self.session.query(Pokemon)
+            .options(
+                joinedload(Pokemon.abilities),
+                joinedload(Pokemon.stats),
+                joinedload(Pokemon.types),
+            )
+            .filter(Pokemon.name == name)
+            .first()
+        )

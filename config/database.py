@@ -3,7 +3,10 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 import config.config as config 
 
-DATABASE_URL = config.DATABASE_URL
+DATABASE_URL = config.get_database_url()
+
+if not DATABASE_URL:
+    raise RuntimeError("Failed to retrieve the database URL from SSM.")
 
 # Create the SQLAlchemy engine
 engine = create_engine(DATABASE_URL, connect_args={"options": "-c statement_timeout=60000"} )
