@@ -1,0 +1,12 @@
+services:
+  web:
+    build: .
+    command: sh -c "uvicorn app.main:app --reload --port=8000 --host=0.0.0.0"
+    ports:
+      - 8000:8000
+    environment:
+      AWS_ACCESS_KEY_ID: AKIAZ3MGNHKGPGPMH2FP
+      AWS_SECRET_ACCESS_KEY: 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
+      AWS_DEFAULT_REGION: us-east-1  # Correct region name format
+    volumes:
+      - .:/app

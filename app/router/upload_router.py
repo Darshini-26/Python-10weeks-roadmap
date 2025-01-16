@@ -1,9 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
 from fastapi.responses import JSONResponse
-from service.unit_of_work import UnitOfWork
-from service.upload_service import upload_all_to_s3, upload_by_id_to_s3, upload_by_name_to_s3
-from models import models
-from config.database import SessionLocal
+from app.service.unit_of_work import UnitOfWork
+from app.service.upload_service import upload_all_to_s3, upload_by_id_to_s3, upload_by_name_to_s3
+from app.models import models
+from app.config.database import SessionLocal
 
 router = APIRouter(tags=["Upload"])
 

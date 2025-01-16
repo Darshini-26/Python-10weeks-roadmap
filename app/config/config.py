@@ -1,4 +1,4 @@
-from config.aws_ssm import pokemon_serveroverride  # Import the function from aws_ssm.py
+from app.config.aws_ssm import pokemon_serveroverride  # Import the function from aws_ssm.py
 
 def get_database_url():
     """

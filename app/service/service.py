@@ -1,10 +1,10 @@
 from typing import List
-from models.models import Pokemon
-from repository.repository import PokemonRepository
+from app.models.models import Pokemon
+from app.repository.repository import PokemonRepository
 from fastapi import HTTPException
 from .unit_of_work import UnitOfWork
-from schemas.schemas import PokemonResponse
-from models.models import Pokemon, Abilities, Stats, Types
+from app.schemas.schemas import PokemonResponse
+from app.models.models import Pokemon, Abilities, Stats, Types
 
 class PokemonService:
     @staticmethod

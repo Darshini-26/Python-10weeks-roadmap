@@ -1,10 +1,10 @@
 from fastapi import APIRouter, Depends, Query
 from typing import List
 from sqlalchemy.orm import session
-from schemas.schemas import PokemonResponse, PokemonOutput
-from service.service import PokemonService
-from config.database import get_db,SessionLocal
-from service.unit_of_work import UnitOfWork
+from app.schemas.schemas import PokemonResponse, PokemonOutput
+from app.service.service import PokemonService
+from app.config.database import get_db,SessionLocal
+from app.service.unit_of_work import UnitOfWork
 
 router = APIRouter(prefix="/pokemon", tags=["Pokemon"])
 

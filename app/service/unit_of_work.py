@@ -2,7 +2,7 @@
 from abc import ABC, abstractmethod
 from sqlalchemy.orm import Session
 from typing import Callable
-from repository.repository import PokemonRepository 
+from app.repository.repository import PokemonRepository 
 
 
 # Abstract Unit of Work Base

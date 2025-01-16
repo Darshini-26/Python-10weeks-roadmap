@@ -1,8 +1,8 @@
 from fastapi import FastAPI
-from router.router import router # Your router containing the API routes
-from router.upload_router import router as upload_router
-from config.database import engine, Base
-from utils.init_db import load_data
+from app.router.router import router # Your router containing the API routes
+from app.router.upload_router import router as upload_router
+from app.config.database import engine, Base
+from app.utils.init_db import load_data
 
 
 # Initialize the FastAPI app

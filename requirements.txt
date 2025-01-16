@@ -3,3 +3,6 @@ requests
 pydantic
 sqlalchemy
 boto3
+pandas
+uvicorn
+psycopg2-binary

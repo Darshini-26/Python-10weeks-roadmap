@@ -1,6 +1,6 @@
 from sqlalchemy import Integer, String, Column, Boolean, ForeignKey
 from sqlalchemy.orm import relationship, declarative_base
-from config.database import Base
+from app.config.database import Base
 
 class Pokemon(Base):
     __tablename__ = "pokemon"
