@@ -1,6 +1,8 @@
 from app.config.database import Base, engine
 from app.models.models import Pokemon,Abilities,Stats,Types,Base
 from sqlalchemy.orm import Session
+import json
+
 
 def load_data():
     Base.metadata.create_all(bind=engine)  # Ensure tables exist
